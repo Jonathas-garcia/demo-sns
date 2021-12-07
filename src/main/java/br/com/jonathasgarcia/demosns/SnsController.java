@@ -7,29 +7,24 @@ import org.springframework.cloud.aws.messaging.config.annotation.NotificationSub
 import org.springframework.cloud.aws.messaging.endpoint.NotificationStatus;
 import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationMessageMapping;
 import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationSubscriptionMapping;
-import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationUnsubscribeConfirmationMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+
+@Controller
 @RequestMapping("/teste")
-public class Controller {
+public class SnsController {
 
-    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+    private static final Logger logger = LoggerFactory.getLogger(SnsController.class);
 
     @NotificationMessageMapping
     public void receiveNotification(@NotificationMessage String message, @NotificationSubject String subject) {
         logger.info("Received message: {}, having subject: {}", message, subject);
     }
 
-    @NotificationUnsubscribeConfirmationMapping
-    public void confirmSubscriptionMessage(NotificationStatus notificationStatus) {
-        logger.info("Unsubscribed from Topic");
-        notificationStatus.confirmSubscription();
-    }
-
     @NotificationSubscriptionMapping
-    public void confirmUnsubscribeMessage(NotificationStatus notificationStatus) {
+    public void confirmUnsubscribeMessage(@RequestBody NotificationStatus notificationStatus) {
         logger.info("Subscribed to Topic");
         notificationStatus.confirmSubscription();
     }
